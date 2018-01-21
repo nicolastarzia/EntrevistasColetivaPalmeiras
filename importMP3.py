@@ -3,9 +3,16 @@ import requests
 import os
 import validators
 
+
 def carregarArquivoLocal():
     with open('audios.json') as data_file:
        return json.load(data_file)
+
+def CorrigirURLArquivo(urlArquivo):
+    urlArquivo = urlArquivo.split('?')[0].lower()
+    if(not urlArquivo.endswith(('.mp3','.mp4','.m4a','.wav'))):
+        urlArquivo = urlArquivo + '.mp3'
+    return urlArquivo
 
 def ExtrairNomeDoArquivo(titulo):
     nomeArquivo = titulo.replace('/','-') #Folder structure
@@ -27,17 +34,24 @@ def CriarDiretorio(ano, mes):
 
 def DownloadArquivo(urlArquivo, caminhoDoArquivo):
     r = requests.get(urlArquivo, allow_redirects=True)
-    open(caminhoDoArquivo, 'wb').write(r.content)
+    if(r.status_code == requests.codes.ok):
+        open(caminhoDoArquivo, 'wb').write(r.content)
+    else:
+        open('urlswithproblem.json', 'wb').write(urlArquivo + ';' + caminhoDoArquivo + '\n')
 
 arquivos = carregarArquivoLocal()
 for arquivo in arquivos:
     urlArquivo = arquivo['urlFile']
+    urlArquivo = CorrigirURLArquivo(urlArquivo)
     if validators.url(urlArquivo):
         extensaoArquivo = urlArquivo.split('.')[-1].split('?')[0].strip()
         nomeArquivo = ExtrairNomeDoArquivo(arquivo['titulo']).strip()
         dataArquivo = ExtrairDatasCalendario(arquivo['calendario'])
         diretorioArquivo = CriarDiretorio(dataArquivo['ano'], dataArquivo['mes'])
-        caminhoDoArquivo = '{0}/{1}.{2}'.format(diretorioArquivo, nomeArquivo, extensaoArquivo)
-        DownloadArquivo(urlArquivo, caminhoDoArquivo)
-        print('{0} - {1}'.format(urlArquivo, caminhoDoArquivo))
+        caminhoDoArquivo = '{0}/{1}{2}.{3}'.format(diretorioArquivo,dataArquivo['dia'], nomeArquivo, extensaoArquivo)
+        if not os.path.exists(caminhoDoArquivo):
+            print(urlArquivo)
+            print(caminhoDoArquivo)
+            DownloadArquivo(urlArquivo, caminhoDoArquivo)
+            print('{0} - {1}'.format(urlArquivo, caminhoDoArquivo))
 
