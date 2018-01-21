@@ -8,23 +8,19 @@ class PalmeirasSpider(scrapy.Spider):
     page = 1
 
     def start_requests(self):
-        arrUrls = []
-        for i in range(1,2):
-            frmData = {
-             'page': str(i),
-             'count': str(self.countItens)
-            }
-            arrUrls.append(FormRequest(self.urlAudio, formdata=frmData, callback=self.parse))
-        return arrUrls
-#        yield scrapy.Request(url=self.urlAudio, method='POST', body=frmData, callback=self.parse)
-
+        frmData = {
+         'page': str(1),
+         'count': str(self.countItens)
+        }
+        return [FormRequest(self.urlAudio, formdata=frmData, callback=self.parse)]
 
     def parse(self, response):
-        if(response.body != ''):
-            for boxAudio in response.css(".boxAudio"):
+        audios = response.css('.boxAudio')
+        if(audios != []): #Se nao tiver mais informacoes a variavel nao é preenchida
+            for boxAudio in audios:
                 yield {
                     'calendario' : boxAudio.css('.calAudio::text').extract_first(),
-                    'titulo' : boxAudio.css('.titAudio::text').extract_first(),
+                    'titulo' : boxAudio.css('.titAudio::text').extract_first().encode('ascii','ignore').decode('ascii'),
                     'urlFile' : boxAudio.css('::attr(file)').extract_first()
                 }
             self.page = self.page + 1
