@@ -14,7 +14,7 @@ BOT_NAME = 'AudiosPalmeiras'
 SPIDER_MODULES = ['AudiosPalmeiras.spiders']
 NEWSPIDER_MODULE = 'AudiosPalmeiras.spiders'
 
-
+FEED_EXPORT_ENCODING = 'utf-8'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'AudiosPalmeiras (+http://www.yourdomain.com)'
 
