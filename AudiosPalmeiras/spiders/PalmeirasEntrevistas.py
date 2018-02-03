@@ -9,7 +9,7 @@ class PalmeirasSpider(scrapy.Spider):
 
     def start_requests(self):
         frmData = {
-         'page': str(1),
+         'page': str(self.page),
          'count': str(self.countItens)
         }
         return [FormRequest(self.urlAudio, formdata=frmData, callback=self.parse)]
