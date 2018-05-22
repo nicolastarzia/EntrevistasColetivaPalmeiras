@@ -8,6 +8,8 @@ Utilizar inteligencia cognitiva para entender como foi a entrevista coletiva (ca
 
 ## Como executar
 Este projeto foi construido em *Python*, e foi dividido em duas partes:
+Instalar as dependencias:
+	pip install -r requirements.txt --ignore-installed six --user
 
 Primeira parte, é a construção do arquivo JSON com com as seguintes informações:
     - Data da coletiva
