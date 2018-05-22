@@ -1,8 +1,12 @@
+# encoding=utf8
 import json
 import requests
 import os
+import sys
 import validators
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 def carregarArquivoLocal():
     with open('audios.json') as data_file:
